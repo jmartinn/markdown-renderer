@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* highlight.js – GitHub-style light theme */
+@import 'highlight.js/styles/github.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Easing tokens (Emil Kowalski's blueprint): ease-out for enter/exit,
+   ease-in-out for on-screen movement. */
+:root {
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+:root {
+  /* ── Markdown renderer tokens (light) ────────────────────── */
+  --md-bg:                  oklch(1 0 0);
+  --md-surface:             oklch(0.99 0 0);
+  --md-preview-bg:          oklch(1 0 0);
+  --md-editor-bg:           oklch(0.985 0 0);
+  --md-editor-text:         oklch(0.18 0 0);
+  --md-body:                oklch(0.28 0 0);
+  --md-heading:             oklch(0.1 0 0);
+  --md-muted:               oklch(0.55 0 0);
+  --md-danger:              oklch(0.48 0.18 25);
+  --md-border:              oklch(0.91 0 0);
+  --md-border-strong:       oklch(0.78 0 0);
+  --md-hover:               oklch(0.96 0 0);
+  --md-selection:           oklch(0.85 0.05 240);
+
+  --md-link:                oklch(0.35 0 0);
+  --md-link-decoration:     oklch(0.78 0 0);
+
+  --md-code-bg:             oklch(0.985 0 0);
+  --md-code-header:         oklch(0.975 0 0);
+  --md-code-border:         oklch(0.9 0 0);
+  --md-code-lang:           oklch(0.52 0 0);
+  --md-code-copy:           oklch(0.52 0 0);
+  --md-code-copy-hover:     oklch(0.1 0 0);
+  --md-code-inline-bg:      oklch(0.95 0 0);
+  --md-code-inline-text:    oklch(0.22 0 0);
+
+  --md-table-head:          oklch(0.975 0 0);
+  --md-table-row-hover:     oklch(0.975 0 0);
+
+  --md-tab-bg:              oklch(0.94 0 0);
+  --md-tab-active:          oklch(1 0 0);
+  --md-tab-active-text:     oklch(0.1 0 0);
+
+  --md-btn-bg:              oklch(0.1 0 0);
+  --md-btn-text:            oklch(1 0 0);
+  --md-btn-hover:           oklch(0.2 0 0);
+
+  --md-radius:              6px;
+  --md-radius-sm:           5px;
+
+  /* ── Base shadcn tokens (light) — used by the @layer base reset ── */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --border: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+}
+
+.dark {
+  /* ── Markdown renderer tokens (dark) ─────────────────────── */
+  --md-bg:                  oklch(0.12 0 0);
+  --md-surface:             oklch(0.145 0 0);
+  --md-preview-bg:          oklch(0.12 0 0);
+  --md-editor-bg:           oklch(0.145 0 0);
+  --md-editor-text:         oklch(0.9 0 0);
+  --md-body:                oklch(0.82 0 0);
+  --md-heading:             oklch(0.97 0 0);
+  --md-muted:               oklch(0.56 0 0);
+  --md-danger:              oklch(0.72 0.18 25);
+  --md-border:              oklch(0.24 0 0);
+  --md-border-strong:       oklch(0.38 0 0);
+  --md-hover:               oklch(0.2 0 0);
+  --md-selection:           oklch(0.3 0.04 240);
+
+  --md-link:                oklch(0.82 0 0);
+  --md-link-decoration:     oklch(0.38 0 0);
+
+  --md-code-bg:             oklch(0.16 0 0);
+  --md-code-header:         oklch(0.18 0 0);
+  --md-code-border:         oklch(0.24 0 0);
+  --md-code-lang:           oklch(0.52 0 0);
+  --md-code-copy:           oklch(0.5 0 0);
+  --md-code-copy-hover:     oklch(0.9 0 0);
+  --md-code-inline-bg:      oklch(0.2 0 0);
+  --md-code-inline-text:    oklch(0.88 0 0);
+
+  --md-table-head:          oklch(0.18 0 0);
+  --md-table-row-hover:     oklch(0.17 0 0);
+
+  --md-tab-bg:              oklch(0.2 0 0);
+  --md-tab-active:          oklch(0.28 0 0);
+  --md-tab-active-text:     oklch(0.97 0 0);
+
+  --md-btn-bg:              oklch(0.97 0 0);
+  --md-btn-text:            oklch(0.1 0 0);
+  --md-btn-hover:           oklch(0.88 0 0);
+
+  /* ── Base shadcn tokens (dark) ─────────────────────────────── */
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --border: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --font-sans: 'Geist', 'Geist Fallback';
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Remove the 300ms double-tap delay on interactive controls (keeps zoom). */
+  button,
+  a,
+  label,
+  input,
+  textarea {
+    touch-action: manipulation;
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── highlight.js dark-mode override ──────────────────────────────── */
+/* Replaces the GitHub light theme with a dark variant inside .dark */
+.dark .hljs {
+  color: oklch(0.82 0 0);
+  background: transparent;
+}
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: oklch(0.52 0 0);
+  font-style: italic;
+}
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-addition {
+  color: oklch(0.72 0.12 280);
+}
+.dark .hljs-number,
+.dark .hljs-string,
+.dark .hljs-meta .hljs-meta-string,
+.dark .hljs-literal,
+.dark .hljs-doctag,
+.dark .hljs-regexp {
+  color: oklch(0.72 0.12 160);
+}
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-name,
+.dark .hljs-selector-id,
+.dark .hljs-selector-class {
+  color: oklch(0.75 0.1 55);
+}
+.dark .hljs-attr,
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-type,
+.dark .hljs-selector-attr,
+.dark .hljs-selector-pseudo {
+  color: oklch(0.72 0.1 200);
+}
+.dark .hljs-built_in,
+.dark .hljs-builtin-name {
+  color: oklch(0.72 0.1 30);
+}
+.dark .hljs-symbol,
+.dark .hljs-bullet,
+.dark .hljs-link {
+  color: oklch(0.68 0.1 350);
+}
+.dark .hljs-deletion {
+  color: oklch(0.65 0.18 25);
+}
+.dark .hljs-emphasis {
+  font-style: italic;
+}
+.dark .hljs-strong {
+  font-weight: bold;
+}
