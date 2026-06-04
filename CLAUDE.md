@@ -52,7 +52,7 @@ When touching code highlighting, remember highlight.js themes are split: the **l
 - **`--md-*` tokens** — the design system this app's UI reads. Defined for light (`:root`) and dark (`.dark`). Components reference them inline as `bg-[var(--md-bg)]`, etc. To restyle the app, edit these tokens, not the components.
 - A small set of base shadcn-style tokens (`--background`, `--foreground`, `--border`, `--ring`, `--radius`) mapped into Tailwind's `@theme inline`. These survive only because the `@layer base` reset (`* { border-border }`, `body { bg-background text-foreground }`) and `app/layout.tsx` (`bg-background`) use them.
 
-`next-themes` drives the `.dark` class (`attribute="class"`, `defaultTheme="system"`). `ThemeToggle` in `components/theme-provider.tsx` cycles light → dark → system and is mounted once at the bottom of `MarkdownEditor`. Its mount-guard `useEffect` carries an `eslint-disable react-hooks/set-state-in-effect` because the SSR hydration guard is a deliberate exception to that rule.
+`next-themes` drives the `.dark` class (`attribute="class"`, `defaultTheme="system"`). `ThemeToggle` in `components/editor/theme-toggle.tsx` cycles light → dark → system and is mounted once at the bottom of `MarkdownEditor`. `app/providers.tsx` wraps the app with `next-themes`. Its mount-guard `useEffect` carries an `eslint-disable react-hooks/set-state-in-effect` because the SSR hydration guard is a deliberate exception to that rule.
 
 ## Conventions & gotchas
 
