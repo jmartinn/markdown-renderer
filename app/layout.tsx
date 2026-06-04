@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import dynamic from 'next/dynamic'
-import { ThemeProvider } from '@/components/theme-provider'
+import { Providers } from '@/app/providers'
 import './globals.css'
 
 // Code-split analytics into its own chunk; it's only rendered on Vercel, so
@@ -78,9 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${geist.variable} ${geistMono.variable} bg-background`}>
       <body className="font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+        <Providers>{children}</Providers>
         {process.env.VERCEL === '1' && <Analytics />}
       </body>
     </html>

@@ -4,7 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DragDropOverlay } from '@/components/editor/drag-drop-overlay'
 import { MarkdownToolbar } from '@/components/editor/markdown-toolbar'
 import { PreviewPane } from '@/components/editor/preview-pane'
-import { ThemeProvider, ThemeToggle } from '@/components/theme-provider'
+import { Providers } from '@/app/providers'
+import { ThemeToggle } from '@/components/editor/theme-toggle'
 import { createSampleDocument } from '@/lib/markdown-document'
 
 describe('editor UI components', () => {
@@ -67,9 +68,9 @@ describe('editor UI components', () => {
 
   it('exposes an accessible theme toggle label after mount', async () => {
     render(
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <Providers>
         <ThemeToggle />
-      </ThemeProvider>
+      </Providers>
     )
 
     await waitFor(() => {
