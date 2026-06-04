@@ -6,7 +6,7 @@ A client-only Markdown editor and previewer built with Next.js 16. It runs entir
 
 Requirements:
 
-- Node.js `>=20.9`
+- Node.js `>=22`
 - pnpm `11.5.0` via Corepack
 
 ```bash
@@ -56,12 +56,18 @@ See `docs/architecture.md` for more detail.
 
 ## Deployment
 
+### Vercel
+
 This app is ready for Vercel with the default Next.js framework preset.
 
-- Node.js: `>=20.9`
+- Node.js: `>=22`
 - pnpm: `11.5.0`
 - Build command: `pnpm build`
 - No server-side environment variables are required.
+
+### Container (GHCR + homelab)
+
+GitHub Actions builds and pushes a production image to GHCR. The **Build image** workflow runs only after **CI** succeeds on `master` (lint, tests, build, audit, and E2E). See `docs/ci-cd.md` for workflow details, branch protection, and manual rebuilds.
 
 The app remains client-only. File reads, draft storage, clipboard writes, and exports all happen in the browser.
 
