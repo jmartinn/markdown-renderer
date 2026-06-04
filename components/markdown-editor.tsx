@@ -1,25 +1,18 @@
 "use client"
 
-import { useCallback, useDeferredValue, useRef, useState } from "react"
-import type { DragEvent } from "react"
+import { useCallback, useDeferredValue, useState } from "react"
 
 import { DragDropOverlay } from "@/components/editor/drag-drop-overlay"
 import { EditorFooter } from "@/components/editor/editor-footer"
 import { EditorPane } from "@/components/editor/editor-pane"
-import { MarkdownToolbar } from "@/components/editor/markdown-toolbar"
+import { MarkdownToolbar, type EditorView } from "@/components/editor/markdown-toolbar"
 import { PreviewPane } from "@/components/editor/preview-pane"
-import type { EditorView } from "@/components/editor/view-types"
-import { ThemeToggle } from "@/components/theme-provider"
+import { ThemeToggle } from "@/components/editor/theme-toggle"
+import { useDragDrop } from "@/hooks/use-drag-drop"
 import { useMarkdownDocument } from "@/hooks/use-markdown-document"
-
-function dragEventIncludesFiles(event: DragEvent): boolean {
-  return event.dataTransfer.types.includes("Files")
-}
 
 export function MarkdownEditor() {
   const [view, setView] = useState<EditorView>("split")
-  const [isDragging, setIsDragging] = useState(false)
-  const dragDepth = useRef(0)
   const {
     document,
     counts,
@@ -30,11 +23,6 @@ export function MarkdownEditor() {
     exportDocument,
   } = useMarkdownDocument()
 
-  const isPreviewVisible = view === "preview" || view === "split"
-  const previewInput = isPreviewVisible ? document.content : ""
-  const deferredPreviewContent = useDeferredValue(previewInput)
-  const isPreviewStale = isPreviewVisible && previewInput !== deferredPreviewContent
-
   const handleOpenFile = useCallback(
     (file: File | undefined) => {
       void openFile(file)
@@ -42,37 +30,14 @@ export function MarkdownEditor() {
     [openFile]
   )
 
-  const handleDragEnter = useCallback((event: DragEvent) => {
-    if (!dragEventIncludesFiles(event)) return
+  const { isDragging, handleDragEnter, handleDragLeave, handleDragOver, handleDrop } = useDragDrop({
+    onFileDrop: handleOpenFile,
+  })
 
-    event.preventDefault()
-    dragDepth.current += 1
-    setIsDragging(true)
-  }, [])
-
-  const handleDragLeave = useCallback((event: DragEvent) => {
-    if (!dragEventIncludesFiles(event)) return
-
-    event.preventDefault()
-    dragDepth.current = Math.max(0, dragDepth.current - 1)
-    if (dragDepth.current === 0) setIsDragging(false)
-  }, [])
-
-  const handleDragOver = useCallback((event: DragEvent) => {
-    if (dragEventIncludesFiles(event)) event.preventDefault()
-  }, [])
-
-  const handleDrop = useCallback(
-    (event: DragEvent) => {
-      if (!dragEventIncludesFiles(event)) return
-
-      event.preventDefault()
-      dragDepth.current = 0
-      setIsDragging(false)
-      void openFile(event.dataTransfer.files[0])
-    },
-    [openFile]
-  )
+  const isPreviewVisible = view === "preview" || view === "split"
+  const previewInput = isPreviewVisible ? document.content : ""
+  const deferredPreviewContent = useDeferredValue(previewInput)
+  const isPreviewStale = isPreviewVisible && previewInput !== deferredPreviewContent
 
   return (
     <div
