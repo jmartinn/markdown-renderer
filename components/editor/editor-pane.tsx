@@ -1,4 +1,4 @@
-import type { EditorView } from "@/components/editor/view-types"
+import type { EditorView } from "@/components/editor/markdown-toolbar"
 
 interface EditorPaneProps {
   content: string

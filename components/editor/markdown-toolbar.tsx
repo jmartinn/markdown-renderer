@@ -1,6 +1,8 @@
 import { useRef, type ChangeEvent, type KeyboardEvent } from "react"
 
-import { EDITOR_VIEWS, type EditorView } from "@/components/editor/view-types"
+export type EditorView = "editor" | "split" | "preview"
+
+export const EDITOR_VIEWS: EditorView[] = ["editor", "split", "preview"]
 import type { DocumentNotice } from "@/hooks/use-markdown-document"
 import type { MarkdownDocument } from "@/lib/markdown-document"
 

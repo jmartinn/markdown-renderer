@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 
-import type { EditorView } from "@/components/editor/view-types"
+import type { EditorView } from "@/components/editor/markdown-toolbar"
 
 // The renderer pulls in react-markdown + remark + rehype-highlight + highlight.js
 // (~330KB). Load it as a separate chunk after the shell paints so the editor is
