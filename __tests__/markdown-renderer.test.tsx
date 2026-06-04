@@ -2,8 +2,13 @@ import { createElement } from 'react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
+import { CopyButton } from '@/components/editor/copy-button'
 import { MarkdownRenderer } from '@/components/markdown-renderer'
-import { extractTextFromReactNode, parseCodeLanguage } from '@/lib/markdown-rendering'
+import {
+  extractCodeBlockProps,
+  extractTextFromReactNode,
+  parseCodeLanguage,
+} from '@/lib/markdown-rendering'
 
 describe('MarkdownRenderer', () => {
   it('renders links, images, tables, and task lists', () => {
@@ -85,12 +90,42 @@ const answer = 42
   })
 })
 
+describe('CopyButton', () => {
+  it('copies the provided text', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    })
+
+    render(<CopyButton text="hello" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Copy code' }))
+
+    await waitFor(() => {
+      expect(writeText).toHaveBeenCalledWith('hello')
+    })
+  })
+})
+
 describe('Markdown rendering helpers', () => {
   it('parses fenced-code languages from highlighted class names', () => {
     expect(parseCodeLanguage('hljs language-typescript')).toBe('typescript')
     expect(parseCodeLanguage('language-shell')).toBe('shell')
     expect(parseCodeLanguage('hljs')).toBeNull()
     expect(parseCodeLanguage(undefined)).toBeNull()
+  })
+
+  it('extracts language and raw text from highlighted code children', () => {
+    const children = createElement(
+      'code',
+      { className: 'hljs language-typescript' },
+      createElement('span', null, 'const answer = 42')
+    )
+
+    expect(extractCodeBlockProps(children)).toEqual({
+      language: 'typescript',
+      rawText: 'const answer = 42',
+    })
   })
 
   it('extracts text from nested highlighted React nodes', () => {

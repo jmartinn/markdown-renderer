@@ -14,6 +14,24 @@ export function parseCodeLanguage(className: string | undefined): string | null 
   return language ?? null
 }
 
+interface CodeElementProps {
+  className?: string
+  children?: ReactNode
+}
+
+export function extractCodeBlockProps(children: ReactNode): {
+  language: string | null
+  rawText: string
+} {
+  const codeEl = isValidElement<CodeElementProps>(children) ? children : null
+  const className = codeEl?.props?.className ?? ""
+
+  return {
+    language: parseCodeLanguage(className),
+    rawText: extractTextFromReactNode(codeEl?.props?.children),
+  }
+}
+
 export function extractTextFromReactNode(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node)
   if (!node || typeof node === "boolean") return ""
