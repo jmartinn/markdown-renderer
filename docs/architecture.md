@@ -18,7 +18,7 @@ The hook also exposes word/character counts, notices, the export filename, uploa
 
 ## Persistence
 
-Drafts are serialized under the versioned key `markdown-renderer:draft:v1`. The version is part of the payload so future migrations can ignore incompatible drafts safely. Storage reads and writes are wrapped in `try/catch`; if storage is unavailable, the app still works without draft persistence.
+Drafts are serialized under the versioned key `markdown-renderer:draft:v1` via `lib/draft-storage.ts`. The version is part of the payload so future migrations can ignore incompatible drafts safely. Storage reads and writes are wrapped in `try/catch`; if storage is unavailable, the app still works without draft persistence.
 
 ## Rendering pipeline
 

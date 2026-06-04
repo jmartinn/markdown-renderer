@@ -3,13 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { downloadMarkdownDocument, MarkdownFileError, readMarkdownFile } from "@/lib/file-transfer"
+import { parseStoredDraft, serializeDraft } from "@/lib/draft-storage"
 import {
   DRAFT_STORAGE_KEY,
   createSampleDocument,
   getDocumentCounts,
   getExportFileName,
-  parseStoredDraft,
-  serializeDraft,
   type MarkdownDocument,
 } from "@/lib/markdown-document"
 

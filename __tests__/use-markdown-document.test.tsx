@@ -2,11 +2,11 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useMarkdownDocument } from '@/hooks/use-markdown-document'
+import { serializeDraft } from '@/lib/draft-storage'
 import {
   DRAFT_STORAGE_KEY,
   createSampleDocument,
   getExportFileName,
-  serializeDraft,
   type MarkdownDocument,
 } from '@/lib/markdown-document'
 
