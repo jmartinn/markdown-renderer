@@ -47,6 +47,12 @@ export function MarkdownEditor() {
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-[var(--md-radius-sm)] focus:border focus:border-[var(--md-border)] focus:bg-[var(--md-surface)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-[var(--md-body)] focus:outline-none focus:ring-2 focus:ring-[var(--md-focus)]"
+      >
+        Skip to content
+      </a>
       <MarkdownToolbar
         view={view}
         document={document}
@@ -59,7 +65,11 @@ export function MarkdownEditor() {
         onExport={exportDocument}
       />
 
-      <main className="flex flex-col sm:flex-row flex-1 overflow-hidden">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex flex-col sm:flex-row flex-1 overflow-hidden outline-none"
+      >
         {(view === "editor" || view === "split") && (
           <EditorPane content={document.content} view={view} onContentChange={updateContent} />
         )}
