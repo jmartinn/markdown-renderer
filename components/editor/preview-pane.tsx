@@ -36,7 +36,7 @@ export function PreviewPane({ content, view, isStale }: PreviewPaneProps) {
           Preview
         </span>
         {isStale ? (
-          <span role="status" aria-live="polite" className="text-[11px] text-[var(--md-muted)]">
+          <span className="text-[11px] text-[var(--md-muted)]">
             Updating preview…
           </span>
         ) : null}
