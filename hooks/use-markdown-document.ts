@@ -3,7 +3,13 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react"
 
 import { downloadMarkdownDocument, MarkdownFileError, readMarkdownFile } from "@/lib/file-transfer"
-import { parseStoredDraft, serializeDraft } from "@/lib/draft-storage"
+import {
+  classifyStorageError,
+  describeSaveError,
+  parseStoredDraft,
+  serializeDraft,
+  type StorageFailureReason,
+} from "@/lib/draft-storage"
 import {
   DRAFT_STORAGE_KEY,
   createSampleDocument,
@@ -18,6 +24,8 @@ export interface DocumentNotice {
   type: DocumentNoticeType
   message: string
 }
+
+export type SaveStatus = "saved" | "unsaved" | "saving" | "error"
 
 interface UseMarkdownDocumentOptions {
   storage?: Storage | null
@@ -44,14 +52,16 @@ function readDraft(storage: Storage | null): MarkdownDocument | null {
   }
 }
 
-function writeDraft(storage: Storage | null, document: MarkdownDocument): boolean {
-  if (!storage) return false
+type WriteResult = { ok: true } | { ok: false; reason: StorageFailureReason }
+
+function writeDraft(storage: Storage | null, document: MarkdownDocument): WriteResult {
+  if (!storage) return { ok: true }
 
   try {
     storage.setItem(DRAFT_STORAGE_KEY, serializeDraft(document))
-    return true
-  } catch {
-    return false
+    return { ok: true }
+  } catch (error) {
+    return { ok: false, reason: classifyStorageError(error) }
   }
 }
 
@@ -59,6 +69,8 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
   const [document, setDocument] = useState<MarkdownDocument>(() => createSampleDocument())
   const [notice, setNotice] = useState<DocumentNotice | null>(null)
   const [draftReady, setDraftReady] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved")
+  const notifiedSaveErrorRef = useRef(false)
   const storage = resolveStorage(options.storage)
 
   useEffect(() => {
@@ -78,22 +90,38 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
     latestDocumentRef.current = document
   }, [document])
 
+  // Schedule a debounced save whenever the user-authored document changes. The
+  // sample and a freshly-restored draft already live in their canonical place, so
+  // they schedule nothing — which also avoids a startup "Saving…" flash.
   useEffect(() => {
     if (!draftReady) return
+    if (document.source === "sample" || document.source === "restored") return
 
-    // Debounce so large documents aren't re-serialized to localStorage on every
-    // keystroke — a synchronous setItem of a big string janks typing. Persist
-    // once typing settles. (setNotice runs in the timeout, not synchronously in
-    // the effect, so it doesn't trip react-hooks/set-state-in-effect.)
-    const timer = setTimeout(() => {
-      const persisted = writeDraft(storage, document)
-      if (!persisted && storage) {
-        setNotice({ type: "error", message: "Draft changes could not be saved in this browser." })
-      }
-    }, 400)
-
+    const timer = setTimeout(() => setSaveStatus("saving"), 400)
     return () => clearTimeout(timer)
-  }, [document, draftReady, storage])
+  }, [document, draftReady])
+
+  // Perform the write once "Saving…" has committed. Running it in a follow-up
+  // effect (after React commits and the browser paints) makes the transient status
+  // honestly visible without manual requestAnimationFrame bookkeeping.
+  useEffect(() => {
+    if (saveStatus !== "saving") return
+
+    const result = writeDraft(storage, latestDocumentRef.current)
+    if (result.ok) {
+      setSaveStatus("saved")
+      if (notifiedSaveErrorRef.current) {
+        notifiedSaveErrorRef.current = false
+        setNotice(null)
+      }
+    } else {
+      setSaveStatus("error")
+      if (!notifiedSaveErrorRef.current) {
+        notifiedSaveErrorRef.current = true
+        setNotice({ type: "error", message: describeSaveError(result.reason) })
+      }
+    }
+  }, [saveStatus, storage])
 
   useEffect(() => {
     if (!draftReady || !storage) return
@@ -134,6 +162,7 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
       dirty: true,
       source: "typed",
     }))
+    setSaveStatus("unsaved")
   }, [])
 
   const openFile = useCallback(async (file: File | undefined): Promise<boolean> => {
@@ -149,6 +178,7 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
         lastLoadedAt: Date.now(),
         source: "uploaded",
       })
+      setSaveStatus("unsaved")
       setNotice({ type: "info", message: `Opened ${file.name}.` })
 
       return true
@@ -176,6 +206,7 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
     document,
     counts,
     notice,
+    saveStatus,
     exportFileName,
     draftReady,
     updateContent,

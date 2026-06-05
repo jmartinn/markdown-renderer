@@ -17,6 +17,7 @@ export function MarkdownEditor() {
     document,
     counts,
     notice,
+    saveStatus,
     exportFileName,
     updateContent,
     openFile,
@@ -59,6 +60,7 @@ export function MarkdownEditor() {
         wordCount={counts.words}
         characterCount={counts.characters}
         notice={notice}
+        saveStatus={saveStatus}
         exportFileName={exportFileName}
         onViewChange={setView}
         onOpenFile={handleOpenFile}

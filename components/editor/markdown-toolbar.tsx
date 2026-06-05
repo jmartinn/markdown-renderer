@@ -3,8 +3,15 @@ import { useRef, type ChangeEvent, type KeyboardEvent } from "react"
 export type EditorView = "editor" | "split" | "preview"
 
 export const EDITOR_VIEWS: EditorView[] = ["editor", "split", "preview"]
-import type { DocumentNotice } from "@/hooks/use-markdown-document"
+import type { DocumentNotice, SaveStatus } from "@/hooks/use-markdown-document"
 import type { MarkdownDocument } from "@/lib/markdown-document"
+
+const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
+  saved: "Saved",
+  unsaved: "Unsaved",
+  saving: "Saving…",
+  error: "Save failed",
+}
 
 interface MarkdownToolbarProps {
   view: EditorView
@@ -12,6 +19,7 @@ interface MarkdownToolbarProps {
   wordCount: number
   characterCount: number
   notice: DocumentNotice | null
+  saveStatus: SaveStatus
   exportFileName: string
   onViewChange: (view: EditorView) => void
   onOpenFile: (file: File | undefined) => void
@@ -24,6 +32,7 @@ export function MarkdownToolbar({
   wordCount,
   characterCount,
   notice,
+  saveStatus,
   exportFileName,
   onViewChange,
   onOpenFile,
@@ -68,8 +77,12 @@ export function MarkdownToolbar({
             </span>
             <span className="hidden sm:inline text-sm text-[var(--md-muted)] font-normal">Renderer</span>
           </h1>
-          <span className="hidden md:block max-w-[12rem] truncate text-[11px] text-[var(--md-muted)]">
-            {document.dirty ? "Draft" : "Loaded"}: {document.fileName}
+          <span
+            className={`hidden md:block max-w-[12rem] truncate text-[11px] ${
+              saveStatus === "error" ? "text-[var(--md-danger)]" : "text-[var(--md-muted)]"
+            }`}
+          >
+            {SAVE_STATUS_LABEL[saveStatus]} · {document.fileName}
           </span>
         </div>
       </div>
