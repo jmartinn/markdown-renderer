@@ -59,12 +59,15 @@ export function MarkdownToolbar({
           <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" />
         </svg>
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
+          <h1
+            className="m-0 flex items-center gap-1.5 text-sm font-normal"
+            aria-label="Markdown Renderer"
+          >
             <span className="max-[359px]:hidden text-sm font-semibold tracking-tight text-[var(--md-heading)]">
               Markdown
             </span>
             <span className="hidden sm:inline text-sm text-[var(--md-muted)] font-normal">Renderer</span>
-          </div>
+          </h1>
           <span className="hidden md:block max-w-[12rem] truncate text-[11px] text-[var(--md-muted)]">
             {document.dirty ? "Draft" : "Loaded"}: {document.fileName}
           </span>
