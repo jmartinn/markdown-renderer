@@ -3,24 +3,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import { downloadMarkdownDocument, MarkdownFileError, readMarkdownFile } from "@/lib/file-transfer"
+import { parseStoredDraft, serializeDraft } from "@/lib/draft-storage"
 import {
-  LIBRARY_STORAGE_KEY,
-  addDocument,
-  createBlankLibraryDocument,
-  getActiveDocument,
-  importUploadedDocument,
-  libraryPayloadSize,
-  loadLibraryFromStorage,
-  removeDocument,
-  selectDocument,
-  serializeLibrary,
-  toMarkdownDocument,
-  updateActiveDocument,
-  MAX_LIBRARY_BYTES,
-  MAX_LIBRARY_DOCUMENTS,
-  type DocumentLibrary,
-} from "@/lib/document-library"
-import { getDocumentCounts, getExportFileName } from "@/lib/markdown-document"
+  DRAFT_STORAGE_KEY,
+  createSampleDocument,
+  getDocumentCounts,
+  getExportFileName,
+  type MarkdownDocument,
+} from "@/lib/markdown-document"
 
 export type DocumentNoticeType = "info" | "error"
 
@@ -44,25 +34,21 @@ function resolveStorage(storage: Storage | null | undefined): Storage | null {
   }
 }
 
-function readLibrary(storage: Storage | null): DocumentLibrary {
-  if (!storage) {
-    return loadLibraryFromStorage(() => null, () => undefined)
-  }
+function readDraft(storage: Storage | null): MarkdownDocument | null {
+  if (!storage) return null
 
-  return loadLibraryFromStorage(
-    (key) => storage.getItem(key),
-    (key) => storage.removeItem(key)
-  )
+  try {
+    return parseStoredDraft(storage.getItem(DRAFT_STORAGE_KEY))
+  } catch {
+    return null
+  }
 }
 
-function writeLibrary(storage: Storage | null, library: DocumentLibrary): boolean {
+function writeDraft(storage: Storage | null, document: MarkdownDocument): boolean {
   if (!storage) return false
 
   try {
-    const payload = serializeLibrary(library)
-    if (libraryPayloadSize(library) > MAX_LIBRARY_BYTES) return false
-
-    storage.setItem(LIBRARY_STORAGE_KEY, payload)
+    storage.setItem(DRAFT_STORAGE_KEY, serializeDraft(document))
     return true
   } catch {
     return false
@@ -70,62 +56,52 @@ function writeLibrary(storage: Storage | null, library: DocumentLibrary): boolea
 }
 
 export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
-  const [library, setLibrary] = useState<DocumentLibrary>(() => readLibrary(null))
+  const [document, setDocument] = useState<MarkdownDocument>(() => createSampleDocument())
   const [notice, setNotice] = useState<DocumentNotice | null>(null)
-  const [ready, setReady] = useState(false)
+  const [draftReady, setDraftReady] = useState(false)
   const storage = resolveStorage(options.storage)
 
   useEffect(() => {
-    const loaded = readLibrary(storage)
-    const hadLegacyOnly =
-      storage?.getItem(LIBRARY_STORAGE_KEY) == null &&
-      storage?.getItem("markdown-renderer:draft:v1") != null
+    const restoredDocument = readDraft(storage)
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLibrary(loaded)
-    if (hadLegacyOnly) {
-      setNotice({ type: "info", message: "Moved your last draft into the document library." })
+    if (restoredDocument) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDocument(restoredDocument)
+      setNotice({ type: "info", message: "Restored your last draft." })
     }
-    setReady(true)
+
+    setDraftReady(true)
   }, [storage])
 
-  const activeEntry = useMemo(() => getActiveDocument(library), [library])
-  const document = useMemo(() => toMarkdownDocument(activeEntry), [activeEntry])
-
-  const documents = useMemo(
-    () =>
-      [...library.documents].sort(
-        (left, right) => right.updatedAt - left.updatedAt
-      ),
-    [library.documents]
-  )
-
-  const latestLibraryRef = useRef(library)
+  const latestDocumentRef = useRef(document)
   useEffect(() => {
-    latestLibraryRef.current = library
-  }, [library])
+    latestDocumentRef.current = document
+  }, [document])
 
   useEffect(() => {
-    if (!ready) return
+    if (!draftReady) return
 
+    // Debounce so large documents aren't re-serialized to localStorage on every
+    // keystroke — a synchronous setItem of a big string janks typing. Persist
+    // once typing settles. (setNotice runs in the timeout, not synchronously in
+    // the effect, so it doesn't trip react-hooks/set-state-in-effect.)
     const timer = setTimeout(() => {
-      const persisted = writeLibrary(storage, library)
+      const persisted = writeDraft(storage, document)
       if (!persisted && storage) {
-        setNotice({
-          type: "error",
-          message: "Documents could not be saved in this browser (storage full or unavailable).",
-        })
+        setNotice({ type: "error", message: "Draft changes could not be saved in this browser." })
       }
     }, 400)
 
     return () => clearTimeout(timer)
-  }, [library, ready, storage])
+  }, [document, draftReady, storage])
 
   useEffect(() => {
-    if (!ready || !storage) return
+    if (!draftReady || !storage) return
 
+    // Flush the latest draft synchronously when the tab is hidden or unloaded so
+    // a debounced write still in flight isn't lost when the user leaves.
     const flush = () => {
-      writeLibrary(storage, latestLibraryRef.current)
+      writeDraft(storage, latestDocumentRef.current)
     }
     const handleVisibilityChange = () => {
       if (window.document.visibilityState === "hidden") flush()
@@ -138,19 +114,18 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
       window.removeEventListener("pagehide", flush)
       window.document.removeEventListener("visibilitychange", handleVisibilityChange)
     }
-  }, [ready, storage])
+  }, [draftReady, storage])
 
   const counts = useMemo(() => getDocumentCounts(document.content), [document.content])
   const exportFileName = useMemo(() => getExportFileName(document), [document])
 
   const updateContent = useCallback((content: string) => {
-    setLibrary((current) =>
-      updateActiveDocument(current, {
-        content,
-        dirty: true,
-        source: "typed",
-      })
-    )
+    setDocument((currentDocument) => ({
+      ...currentDocument,
+      content,
+      dirty: true,
+      source: "typed",
+    }))
   }, [])
 
   const openFile = useCallback(async (file: File | undefined): Promise<boolean> => {
@@ -158,15 +133,14 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
 
     try {
       const content = await readMarkdownFile(file)
-      const uploaded = {
+
+      setDocument({
         content,
         fileName: file.name,
         dirty: false,
         lastLoadedAt: Date.now(),
-        source: "uploaded" as const,
-      }
-
-      setLibrary((current) => importUploadedDocument(current, uploaded))
+        source: "uploaded",
+      })
       setNotice({ type: "info", message: `Opened ${file.name}.` })
 
       return true
@@ -186,54 +160,19 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
     setNotice({ type: "info", message: `Exported ${fileName}.` })
   }, [document])
 
-  const selectDocumentById = useCallback((id: string) => {
-    setLibrary((current) => selectDocument(current, id) ?? current)
-    setNotice(null)
-  }, [])
-
-  const createDocument = useCallback(() => {
-    setLibrary((current) => {
-      const next = addDocument(current, createBlankLibraryDocument())
-      if (next === "limit") {
-        setNotice({
-          type: "error",
-          message: `You can save up to ${MAX_LIBRARY_DOCUMENTS} documents in this browser.`,
-        })
-        return current
-      }
-
-      setNotice({ type: "info", message: "Created a new document." })
-      return next
-    })
-  }, [])
-
-  const deleteDocument = useCallback((id: string) => {
-    setLibrary((current) => {
-      const next = removeDocument(current, id)
-      if (!next) return current
-      return next
-    })
-    setNotice({ type: "info", message: "Document deleted." })
-  }, [])
-
   const clearNotice = useCallback(() => {
     setNotice(null)
   }, [])
 
   return {
     document,
-    activeDocumentId: library.activeId,
-    documents,
     counts,
     notice,
     exportFileName,
-    draftReady: ready,
+    draftReady,
     updateContent,
     openFile,
     exportDocument,
-    selectDocument: selectDocumentById,
-    createDocument,
-    deleteDocument,
     clearNotice,
   }
 }
