@@ -141,4 +141,68 @@ describe('useMarkdownDocument', () => {
       expect(localStorage.getItem(DRAFT_STORAGE_KEY)).toContain('A saved draft')
     })
   })
+
+  it('transitions saveStatus from unsaved to saved after the debounce', () => {
+    vi.useFakeTimers()
+    try {
+      const { result } = renderHook(() => useMarkdownDocument({ storage: localStorage }))
+
+      act(() => {
+        result.current.updateContent('# Saved please')
+      })
+      expect(result.current.saveStatus).toBe('unsaved')
+
+      act(() => {
+        vi.advanceTimersByTime(400)
+      })
+      expect(result.current.saveStatus).toBe('saved')
+      expect(localStorage.getItem(DRAFT_STORAGE_KEY)).toContain('# Saved please')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('reports a quota failure once, then recovers on the next successful save', () => {
+    vi.useFakeTimers()
+    try {
+      const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new DOMException('full', 'QuotaExceededError')
+      })
+      const { result } = renderHook(() => useMarkdownDocument({ storage: localStorage }))
+
+      act(() => {
+        result.current.updateContent('# One')
+      })
+      act(() => {
+        vi.advanceTimersByTime(400)
+      })
+      expect(result.current.saveStatus).toBe('error')
+      expect(result.current.notice?.message).toBe('Your draft is too large to save in this browser.')
+
+      // Dismiss the notice; a second failing cycle must not re-show it.
+      act(() => {
+        result.current.clearNotice()
+      })
+      act(() => {
+        result.current.updateContent('# Two')
+      })
+      act(() => {
+        vi.advanceTimersByTime(400)
+      })
+      expect(result.current.saveStatus).toBe('error')
+      expect(result.current.notice).toBeNull()
+
+      // Storage recovers: the next save succeeds.
+      setItem.mockRestore()
+      act(() => {
+        result.current.updateContent('# Three')
+      })
+      act(() => {
+        vi.advanceTimersByTime(400)
+      })
+      expect(result.current.saveStatus).toBe('saved')
+    } finally {
+      vi.useRealTimers()
+    }
+  })
 })
