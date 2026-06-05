@@ -17,6 +17,7 @@ import {
   getExportFileName,
   type MarkdownDocument,
 } from "@/lib/markdown-document"
+import { useDismissibleNotice } from "@/hooks/use-dismissible-notice"
 
 export type DocumentNoticeType = "info" | "error"
 
@@ -67,7 +68,7 @@ function writeDraft(storage: Storage | null, document: MarkdownDocument): WriteR
 
 export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
   const [document, setDocument] = useState<MarkdownDocument>(() => createSampleDocument())
-  const [notice, setNotice] = useState<DocumentNotice | null>(null)
+  const { notice, showNotice, clearNotice } = useDismissibleNotice()
   const [draftReady, setDraftReady] = useState(false)
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved")
   const notifiedSaveErrorRef = useRef(false)
@@ -79,11 +80,11 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
     if (restoredDocument) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDocument(restoredDocument)
-      setNotice({ type: "info", message: "Restored your last draft." })
+      showNotice({ type: "info", message: "Restored your last draft." })
     }
 
     setDraftReady(true)
-  }, [storage])
+  }, [storage, showNotice])
 
   const latestDocumentRef = useRef(document)
   useEffect(() => {
@@ -112,16 +113,16 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
       setSaveStatus("saved")
       if (notifiedSaveErrorRef.current) {
         notifiedSaveErrorRef.current = false
-        setNotice(null)
+        clearNotice()
       }
     } else {
       setSaveStatus("error")
       if (!notifiedSaveErrorRef.current) {
         notifiedSaveErrorRef.current = true
-        setNotice({ type: "error", message: describeSaveError(result.reason) })
+        showNotice({ type: "error", message: describeSaveError(result.reason) })
       }
     }
-  }, [saveStatus, storage])
+  }, [saveStatus, storage, showNotice, clearNotice])
 
   useEffect(() => {
     if (!draftReady || !storage) return
@@ -179,7 +180,7 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
         source: "uploaded",
       })
       setSaveStatus("unsaved")
-      setNotice({ type: "info", message: `Opened ${file.name}.` })
+      showNotice({ type: "info", message: `Opened ${file.name}.` })
 
       return true
     } catch (error) {
@@ -188,19 +189,15 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
           ? error.message
           : `Could not read "${file.name}". Try a different Markdown or text file.`
 
-      setNotice({ type: "error", message })
+      showNotice({ type: "error", message })
       return false
     }
-  }, [])
+  }, [showNotice])
 
   const exportDocument = useCallback(() => {
     const fileName = downloadMarkdownDocument(document)
-    setNotice({ type: "info", message: `Exported ${fileName}.` })
-  }, [document])
-
-  const clearNotice = useCallback(() => {
-    setNotice(null)
-  }, [])
+    showNotice({ type: "info", message: `Exported ${fileName}.` })
+  }, [document, showNotice])
 
   return {
     document,
