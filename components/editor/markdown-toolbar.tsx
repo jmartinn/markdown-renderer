@@ -5,6 +5,7 @@ export type EditorView = "editor" | "split" | "preview"
 export const EDITOR_VIEWS: EditorView[] = ["editor", "split", "preview"]
 import type { DocumentNotice, SaveStatus } from "@/hooks/use-markdown-document"
 import type { MarkdownDocument } from "@/lib/markdown-document"
+import { NoticeMessage } from "@/components/editor/notice-message"
 
 const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
   saved: "Saved",
@@ -24,6 +25,7 @@ interface MarkdownToolbarProps {
   onViewChange: (view: EditorView) => void
   onOpenFile: (file: File | undefined) => void
   onExport: () => void
+  onClearNotice: () => void
 }
 
 export function MarkdownToolbar({
@@ -37,6 +39,7 @@ export function MarkdownToolbar({
   onViewChange,
   onOpenFile,
   onExport,
+  onClearNotice,
 }: MarkdownToolbarProps) {
   const activeIndex = EDITOR_VIEWS.indexOf(view)
   const radioRefs = useRef<(HTMLButtonElement | null)[]>([])
@@ -128,17 +131,11 @@ export function MarkdownToolbar({
           <span className="text-xs text-[var(--md-muted)] tabular-nums">
             {wordCount.toLocaleString()} words · {characterCount.toLocaleString()} chars
           </span>
-          {notice ? (
-            <span
-              role="status"
-              aria-live="polite"
-              className={`max-w-[18rem] truncate text-[11px] ${
-                notice.type === "error" ? "text-[var(--md-danger)]" : "text-[var(--md-muted)]"
-              }`}
-            >
-              {notice.message}
-            </span>
-          ) : null}
+          <NoticeMessage
+            notice={notice}
+            onDismiss={onClearNotice}
+            className="max-w-[18rem] text-[11px]"
+          />
         </div>
         <label className="cursor-pointer">
           <input

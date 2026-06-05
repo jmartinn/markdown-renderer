@@ -40,6 +40,7 @@ describe('editor UI components', () => {
         onViewChange={onViewChange}
         onOpenFile={vi.fn()}
         onExport={vi.fn()}
+        onClearNotice={vi.fn()}
       />
     )
 

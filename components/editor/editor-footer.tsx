@@ -1,26 +1,22 @@
+import { NoticeMessage } from "@/components/editor/notice-message"
 import type { DocumentNotice } from "@/hooks/use-markdown-document"
 
 interface EditorFooterProps {
   notice: DocumentNotice | null
+  onClearNotice: () => void
 }
 
-export function EditorFooter({ notice }: EditorFooterProps) {
+export function EditorFooter({ notice, onClearNotice }: EditorFooterProps) {
   return (
     <footer className="shrink-0 flex items-center justify-between gap-4 px-5 h-9 border-t border-[var(--md-border)] bg-[var(--md-surface)]">
       <span className="text-[11px] text-[var(--md-muted)] select-none" suppressHydrationWarning>
         &copy; {new Date().getFullYear()} Markdown Renderer
       </span>
-      {notice ? (
-        <span
-          role="status"
-          aria-live="polite"
-          className={`min-w-0 flex-1 truncate text-center text-[11px] lg:hidden ${
-            notice.type === "error" ? "text-[var(--md-danger)]" : "text-[var(--md-muted)]"
-          }`}
-        >
-          {notice.message}
-        </span>
-      ) : null}
+      <NoticeMessage
+        notice={notice}
+        onDismiss={onClearNotice}
+        className="min-w-0 flex-1 truncate text-center text-[11px] lg:hidden"
+      />
       <nav className="flex shrink-0 items-center gap-4" aria-label="Footer links">
         <a
           href="https://commonmark.org/help/"
