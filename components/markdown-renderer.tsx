@@ -3,11 +3,11 @@
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
-import rehypeHighlight from "rehype-highlight"
 import { memo } from "react"
 import type { Components } from "react-markdown"
 
 import { CopyButton } from "@/components/editor/copy-button"
+import { rehypeCuratedHighlight } from "@/lib/markdown-highlight"
 import { extractCodeBlockProps } from "@/lib/markdown-rendering"
 
 interface MarkdownRendererProps {
@@ -91,7 +91,7 @@ const components: Components = {
 
   // Inline code
   code: ({ children, className, node }) => {
-    // Block code carries a `language-*` class from rehype-highlight. But fenced
+    // Block code carries a `language-*` class from the highlight plugin. But fenced
     // blocks with no language (``` with nothing after it) are left unhighlighted
     // and class-less — detect those via the hast node spanning multiple source
     // lines so they don't fall through to inline styling inside the `pre` chrome.
@@ -105,7 +105,7 @@ const components: Components = {
         </code>
       )
     }
-    // Block code — content is already highlighted by rehype-highlight
+    // Block code — content is already highlighted by rehypeCuratedHighlight
     return <code className={className}>{children}</code>
   },
 
@@ -173,7 +173,7 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: Mark
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
-      rehypePlugins={[rehypeHighlight]}
+      rehypePlugins={[rehypeCuratedHighlight]}
       components={components}
     >
       {content}

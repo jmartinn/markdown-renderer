@@ -27,14 +27,16 @@ Drafts are serialized under the versioned key `markdown-renderer:draft:v1` via `
 1. `react-markdown` parses Markdown.
 2. `remark-gfm` enables tables, task lists, and strikethrough.
 3. `remark-breaks` preserves line breaks.
-4. `rehype-highlight` applies syntax highlighting.
+4. `rehypeCuratedHighlight` (`lib/markdown-highlight.ts`) applies syntax highlighting with a curated lowlight grammar set.
 5. A stable `components` map renders the app's Markdown typography and copyable code block chrome.
 
 The preview receives a deferred content value from `MarkdownEditor`, keeping typing responsive while large Markdown trees are reparsed. When the preview is hidden, the renderer is not mounted, avoiding repeated expensive parsing for editor-only mode.
 
 ## Code block copying
 
-Highlighted code blocks contain nested React nodes after `rehype-highlight` runs. `lib/markdown-rendering.ts` extracts plain text from those nodes and parses `language-*` class names. Keeping this logic pure makes the copy behavior testable outside the renderer.
+Highlighted code blocks contain nested React nodes after `rehypeCuratedHighlight` runs. `lib/markdown-rendering.ts` extracts plain text from those nodes and parses `language-*` class names. Keeping this logic pure makes the copy behavior testable outside the renderer.
+
+`lib/markdown-highlight.ts` deliberately replaces `rehype-highlight`, which statically bundles lowlight's full `common` grammar set (~37 languages) no matter which `languages` option you pass. The curated plugin registers only a small web/dev language set on its own lowlight instance, trimming the dynamically-imported preview chunk.
 
 ## Images
 
