@@ -23,7 +23,7 @@ export function EditorPane({ content, view, onContentChange }: EditorPaneProps) 
         value={content}
         onChange={(event) => onContentChange(event.target.value)}
         spellCheck={false}
-        className="flex-1 resize-none p-5 text-sm font-mono leading-relaxed bg-[var(--md-editor-bg)] text-[var(--md-editor-text)] placeholder:text-[var(--md-muted)] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--md-border-strong)] selection:bg-[var(--md-selection)] overflow-auto"
+        className="flex-1 resize-none p-5 text-sm font-mono leading-relaxed bg-[var(--md-editor-bg)] text-[var(--md-editor-text)] placeholder:text-[var(--md-muted)] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--md-focus)] selection:bg-[var(--md-selection)] overflow-auto"
         placeholder="Start writing Markdown…"
         aria-label="Markdown source editor"
       />

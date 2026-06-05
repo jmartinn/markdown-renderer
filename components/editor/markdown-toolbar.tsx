@@ -96,7 +96,7 @@ export function MarkdownToolbar({
             onKeyDown={(event) => handleViewKeyDown(event, index)}
             aria-checked={view === candidateView}
             tabIndex={view === candidateView ? 0 : -1}
-            className={`relative z-10 cursor-pointer px-2 sm:px-3 py-1 text-center text-xs font-medium capitalize transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)] rounded-[calc(var(--md-radius-sm)-2px)] ${
+            className={`relative z-10 cursor-pointer px-2 sm:px-3 py-1 text-center text-xs font-medium capitalize transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)] rounded-[calc(var(--md-radius-sm)-2px)] ${
               view === candidateView
                 ? "text-[var(--md-tab-active-text)]"
                 : "text-[var(--md-muted)] hover:text-[var(--md-body)]"
@@ -132,7 +132,7 @@ export function MarkdownToolbar({
             className="peer sr-only"
             onChange={handleFileUpload}
           />
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[var(--md-radius-sm)] border border-[var(--md-border)] bg-[var(--md-surface)] text-[var(--md-body)] hover:bg-[var(--md-hover)] transition-[background-color,color,transform] duration-150 active:scale-[0.97] cursor-pointer select-none peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--md-link)]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[var(--md-radius-sm)] border border-[var(--md-border)] bg-[var(--md-surface)] text-[var(--md-body)] hover:bg-[var(--md-hover)] transition-[background-color,color,transform] duration-150 active:scale-[0.97] cursor-pointer select-none peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--md-focus)]">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
               <path d="M6 8V1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
               <path d="M3.5 3.5L6 1l2.5 2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
@@ -145,7 +145,7 @@ export function MarkdownToolbar({
           type="button"
           onClick={onExport}
           aria-label={`Export ${exportFileName}`}
-          className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[var(--md-radius-sm)] bg-[var(--md-btn-bg)] text-[var(--md-btn-text)] hover:bg-[var(--md-btn-hover)] transition-[background-color,color,transform] duration-150 active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-surface)]"
+          className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-[var(--md-radius-sm)] bg-[var(--md-btn-bg)] text-[var(--md-btn-text)] hover:bg-[var(--md-btn-hover)] transition-[background-color,color,transform] duration-150 active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--md-surface)]"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M6 1v7M3.5 4.5L6 7l2.5-2.5M2 9.5h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />

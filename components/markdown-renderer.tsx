@@ -46,7 +46,7 @@ const components: Components = {
 
   // Paragraph
   p: ({ children }) => (
-    <p className="my-4 leading-relaxed text-[var(--md-body)] text-[0.9375rem]">{children}</p>
+    <p className="my-4 leading-relaxed text-[var(--md-body)] text-[0.9375rem] break-words">{children}</p>
   ),
 
   // Links
@@ -55,7 +55,7 @@ const components: Components = {
       href={href}
       target={href?.startsWith("http") ? "_blank" : undefined}
       rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
-      className="text-[var(--md-link)] underline underline-offset-3 decoration-[var(--md-link-decoration)] hover:decoration-[var(--md-link)] transition-colors duration-150"
+      className="text-[var(--md-link)] underline underline-offset-3 decoration-[var(--md-link-decoration)] hover:decoration-[var(--md-link)] transition-colors duration-150 break-words"
     >
       {children}
     </a>
@@ -69,7 +69,7 @@ const components: Components = {
     <ol className="my-4 ml-6 space-y-1.5 list-decimal marker:text-[var(--md-muted)]">{children}</ol>
   ),
   li: ({ children }) => (
-    <li className="text-[0.9375rem] leading-relaxed text-[var(--md-body)] pl-1">{children}</li>
+    <li className="text-[0.9375rem] leading-relaxed text-[var(--md-body)] pl-1 break-words">{children}</li>
   ),
 
   // Blockquote
