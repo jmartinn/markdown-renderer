@@ -19,6 +19,7 @@ describe("MarkdownToolbar", () => {
         onViewChange={noop}
         onOpenFile={noop}
         onExport={noop}
+        onClearNotice={noop}
       />
     )
 
@@ -40,6 +41,7 @@ describe("MarkdownToolbar", () => {
         onViewChange={noop}
         onOpenFile={noop}
         onExport={noop}
+        onClearNotice={noop}
       />
     )
 
@@ -60,6 +62,7 @@ describe("MarkdownToolbar", () => {
         onViewChange={noop}
         onOpenFile={noop}
         onExport={noop}
+        onClearNotice={noop}
       />
     )
 

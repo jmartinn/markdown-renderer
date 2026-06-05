@@ -22,6 +22,7 @@ export function MarkdownEditor() {
     updateContent,
     openFile,
     exportDocument,
+    clearNotice,
   } = useMarkdownDocument()
 
   const handleOpenFile = useCallback(
@@ -65,6 +66,7 @@ export function MarkdownEditor() {
         onViewChange={setView}
         onOpenFile={handleOpenFile}
         onExport={exportDocument}
+        onClearNotice={clearNotice}
       />
 
       <main
@@ -81,7 +83,7 @@ export function MarkdownEditor() {
         )}
       </main>
 
-      <EditorFooter notice={notice} />
+      <EditorFooter notice={notice} onClearNotice={clearNotice} />
       <DragDropOverlay isDragging={isDragging} />
       <ThemeToggle />
     </div>
