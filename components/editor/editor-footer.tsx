@@ -26,7 +26,7 @@ export function EditorFooter({ notice }: EditorFooterProps) {
           href="https://commonmark.org/help/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)]"
+          className="text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)]"
         >
           Syntax guide
         </a>
@@ -34,7 +34,7 @@ export function EditorFooter({ notice }: EditorFooterProps) {
           href="https://github.com/jmartinn/markdown-renderer"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:inline text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)]"
+          className="hidden sm:inline text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)]"
         >
           GitHub
         </a>
@@ -42,7 +42,7 @@ export function EditorFooter({ notice }: EditorFooterProps) {
           href="https://jmartinn.com/"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:inline text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)]"
+          className="hidden sm:inline text-[11px] text-[var(--md-muted)] hover:text-[var(--md-body)] transition-colors duration-150 rounded-[2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)]"
         >
           jmartinn.com
         </a>

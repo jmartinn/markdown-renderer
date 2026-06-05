@@ -23,7 +23,7 @@ export function ThemeToggle() {
       onClick={cycle}
       aria-label={mounted ? `Current theme: ${theme}. Click to cycle themes.` : 'Toggle theme'}
       title={mounted ? `Theme: ${theme}` : undefined}
-      className="fixed bottom-5 right-5 z-50 flex items-center justify-center w-9 h-9 rounded-full border border-[var(--md-border)] bg-[var(--md-surface)] shadow-md hover:bg-[var(--md-hover)] transition-[background-color,box-shadow,transform] duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)]"
+      className="fixed bottom-5 right-5 z-50 flex items-center justify-center w-9 h-9 rounded-full border border-[var(--md-border)] bg-[var(--md-surface)] shadow-md hover:bg-[var(--md-hover)] transition-[background-color,box-shadow,transform] duration-150 active:scale-95 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)]"
     >
       {/* Keyed so the icon remounts and animates in on each theme change. */}
       <span
