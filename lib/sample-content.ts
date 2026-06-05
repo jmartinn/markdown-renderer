@@ -61,7 +61,7 @@ pnpm dev
 |----------------|----------|---------|
 | react-markdown | 10.1.0   | MIT     |
 | remark-gfm     | 4.0.1    | MIT     |
-| rehype-highlight| 7.0.2   | MIT     |
+| lowlight       | 3.3.0    | MIT     |
 | highlight.js   | 11.11.1  | BSD-3   |
 
 ---

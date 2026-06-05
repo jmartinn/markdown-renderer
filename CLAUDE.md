@@ -32,16 +32,18 @@ The main boundaries are:
 - **`components/editor/`** — focused toolbar, editor pane, preview pane, footer, and drag/drop overlay components.
 - **`hooks/use-markdown-document.ts`** — owns the document model (`content`, `fileName`, `dirty`, `lastLoadedAt`, `source`), localStorage draft persistence, file import/export, notices, and counts.
 - **`lib/`** — pure document, file transfer, and Markdown rendering helpers.
-- **`components/markdown-renderer.tsx`** (`"use client"`) — wraps `react-markdown` with `remark-gfm` + `remark-breaks` and `rehype-highlight`. Every HTML element is restyled through a `components` map.
+- **`components/markdown-renderer.tsx`** (`"use client"`) — wraps `react-markdown` with `remark-gfm` + `remark-breaks` and the curated highlight plugin in `lib/markdown-highlight.ts`. Every HTML element is restyled through a `components` map.
 
 ### Code-block rendering is the subtle part
 
-`rehype-highlight` highlights fenced code into nested `<span>`s before `react-markdown` builds the React tree. The custom `pre` override in `markdown-renderer.tsx` therefore:
+`lib/markdown-highlight.ts` (`rehypeCuratedHighlight`) highlights fenced code into nested `<span>`s before `react-markdown` builds the React tree. The custom `pre` override in `markdown-renderer.tsx` therefore:
 1. Reads the language from the child `<code>`'s `language-*` className.
 2. Uses the pure helper in `lib/markdown-rendering.ts` to recover the **raw** text for the copy-to-clipboard button.
 3. Renders the highlighted children directly inside the styled chrome.
 
 The `code` override distinguishes inline code (no `className`) from block code (handled by `pre`).
+
+We deliberately do **not** use `rehype-highlight`: it statically imports lowlight's `common` set (~37 grammars) and bundles all of it regardless of options, so it can't be tree-shaken. `lib/markdown-highlight.ts` builds its own lowlight instance from a curated ~10-language set to keep the preview chunk small. To support a new fenced-code language, add a grammar import there and an alias in the same file.
 
 When touching code highlighting, remember highlight.js themes are split: the **light** theme is imported in `app/globals.css` (`highlight.js/styles/github.css`); the **dark** theme is hand-written as `.dark .hljs*` rules further down in the same file. Changing one without the other breaks a theme.
 

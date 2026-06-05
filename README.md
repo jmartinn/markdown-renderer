@@ -50,7 +50,7 @@ pnpm test:e2e
 - `components/editor/` contains focused toolbar, editor pane, preview pane, footer, and drag/drop overlay components.
 - `hooks/use-markdown-document.ts` owns the document model, file opening, export action, notices, and local draft persistence.
 - `lib/markdown-document.ts` and `lib/file-transfer.ts` hold pure document and browser file helpers.
-- `components/markdown-renderer.tsx` is the Markdown rendering boundary using `react-markdown`, GFM, line breaks, `rehype-highlight`, and copyable code block chrome.
+- `components/markdown-renderer.tsx` is the Markdown rendering boundary using `react-markdown`, GFM, line breaks, a curated syntax-highlight plugin (`lib/markdown-highlight.ts`), and copyable code block chrome.
 
 See `docs/architecture.md` for more detail.
 

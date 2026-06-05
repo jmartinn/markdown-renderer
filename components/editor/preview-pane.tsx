@@ -4,8 +4,8 @@ import dynamic from "next/dynamic"
 
 import type { EditorView } from "@/components/editor/markdown-toolbar"
 
-// The renderer pulls in react-markdown + remark + rehype-highlight + highlight.js
-// (~330KB). Load it as a separate chunk after the shell paints so the editor is
+// The renderer pulls in react-markdown + remark + a curated lowlight/highlight.js
+// grammar set. Load it as a separate chunk after the shell paints so the editor is
 // interactive immediately instead of blocking on the markdown/highlight bundle.
 const MarkdownRenderer = dynamic(
   () => import("@/components/markdown-renderer").then((m) => m.MarkdownRenderer),
