@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from "react"
 
 import { downloadMarkdownDocument, MarkdownFileError, readMarkdownFile } from "@/lib/file-transfer"
 import { parseStoredDraft, serializeDraft } from "@/lib/draft-storage"
@@ -116,8 +116,16 @@ export function useMarkdownDocument(options: UseMarkdownDocumentOptions = {}) {
     }
   }, [draftReady, storage])
 
-  const counts = useMemo(() => getDocumentCounts(document.content), [document.content])
-  const exportFileName = useMemo(() => getExportFileName(document), [document])
+  // Counts are derived from a deferred copy of the content so the O(n) word
+  // split never runs inside the keystroke commit — typing stays responsive on
+  // large documents and the counts catch up a frame later. Correctness is
+  // unchanged; only the timing is.
+  const deferredContent = useDeferredValue(document.content)
+  const counts = useMemo(() => getDocumentCounts(deferredContent), [deferredContent])
+  const exportFileName = useMemo(
+    () => getExportFileName({ fileName: document.fileName }),
+    [document.fileName]
+  )
 
   const updateContent = useCallback((content: string) => {
     setDocument((currentDocument) => ({
