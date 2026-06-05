@@ -35,6 +35,7 @@ describe('editor UI components', () => {
         wordCount={2}
         characterCount={11}
         notice={null}
+        saveStatus="saved"
         exportFileName="document.md"
         onViewChange={onViewChange}
         onOpenFile={vi.fn()}
