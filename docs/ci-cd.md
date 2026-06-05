@@ -9,8 +9,10 @@
 
 ### CI jobs
 
-1. **check** — lint, typecheck, unit tests, production build, and `pnpm audit`.
+1. **check** — lint, typecheck, unit tests (with V8 coverage thresholds), production build, and `pnpm audit`.
 2. **e2e** — Playwright Chromium tests against a production `next start` server (runs only after **check** passes).
+
+`pnpm test` runs Vitest with coverage; the build fails if coverage of `lib/` and `hooks/` drops below the thresholds in `vitest.config.mts`. The HTML report is written to `coverage/` (gitignored).
 
 Cancelled runs use a concurrency group per PR or branch so newer commits supersede older ones.
 
