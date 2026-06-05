@@ -36,4 +36,21 @@ describe('draft storage codec', () => {
     expect(parseStoredDraft('{not json')).toBeNull()
     expect(parseStoredDraft(null)).toBeNull()
   })
+
+  it('rejects drafts whose document fields have the wrong shape', () => {
+    const base = { version: DRAFT_STORAGE_VERSION, savedAt: 1 }
+
+    expect(parseStoredDraft(JSON.stringify(base))).toBeNull()
+    expect(
+      parseStoredDraft(JSON.stringify({ ...base, document: { ...sampleDocument, content: 123 } }))
+    ).toBeNull()
+    expect(
+      parseStoredDraft(JSON.stringify({ ...base, document: { ...sampleDocument, dirty: 'yes' } }))
+    ).toBeNull()
+    expect(
+      parseStoredDraft(
+        JSON.stringify({ ...base, document: { ...sampleDocument, lastLoadedAt: 'soon' } })
+      )
+    ).toBeNull()
+  })
 })
