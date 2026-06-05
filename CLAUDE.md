@@ -52,6 +52,10 @@ When touching code highlighting, remember highlight.js themes are split: the **l
 `app/globals.css` holds two token sets:
 
 - **`--md-*` tokens** — the design system this app's UI reads. Defined for light (`:root`) and dark (`.dark`). Components reference them inline as `bg-[var(--md-bg)]`, etc. To restyle the app, edit these tokens, not the components.
+  The single accent is `--md-accent` (indigo); `--md-link` and the app-wide
+  focus ring `--md-focus` both reference it. WCAG AA for the key token pairs is
+  enforced by `__tests__/contrast.test.ts` (it parses this file with `culori`), so
+  changing a color token to a failing value fails CI.
 - A small set of base shadcn-style tokens (`--background`, `--foreground`, `--border`, `--ring`, `--radius`) mapped into Tailwind's `@theme inline`. These survive only because the `@layer base` reset (`* { border-border }`, `body { bg-background text-foreground }`) and `app/layout.tsx` (`bg-background`) use them.
 
 `next-themes` drives the `.dark` class (`attribute="class"`, `defaultTheme="system"`). `ThemeToggle` in `components/editor/theme-toggle.tsx` cycles light → dark → system and is mounted once at the bottom of `MarkdownEditor`. `app/providers.tsx` wraps the app with `next-themes`. Its mount-guard `useEffect` carries an `eslint-disable react-hooks/set-state-in-effect` because the SSR hydration guard is a deliberate exception to that rule.
