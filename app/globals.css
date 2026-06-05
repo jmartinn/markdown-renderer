@@ -29,8 +29,10 @@
   --md-hover:               oklch(0.96 0 0);
   --md-selection:           oklch(0.85 0.05 240);
 
-  --md-link:                oklch(0.35 0 0);
-  --md-link-decoration:     oklch(0.78 0 0);
+  --md-accent:              oklch(0.47 0.17 285);
+  --md-link:                var(--md-accent);
+  --md-link-decoration:     oklch(0.47 0.17 285 / 0.4);
+  --md-focus:               var(--md-accent);
 
   --md-code-bg:             oklch(0.985 0 0);
   --md-code-header:         oklch(0.975 0 0);
@@ -72,21 +74,23 @@
   --md-editor-text:         oklch(0.9 0 0);
   --md-body:                oklch(0.82 0 0);
   --md-heading:             oklch(0.97 0 0);
-  --md-muted:               oklch(0.56 0 0);
+  --md-muted:               oklch(0.66 0 0);
   --md-danger:              oklch(0.72 0.18 25);
   --md-border:              oklch(0.24 0 0);
   --md-border-strong:       oklch(0.38 0 0);
   --md-hover:               oklch(0.2 0 0);
   --md-selection:           oklch(0.3 0.04 240);
 
-  --md-link:                oklch(0.82 0 0);
-  --md-link-decoration:     oklch(0.38 0 0);
+  --md-accent:              oklch(0.74 0.14 285);
+  --md-link:                var(--md-accent);
+  --md-link-decoration:     oklch(0.74 0.14 285 / 0.4);
+  --md-focus:               var(--md-accent);
 
   --md-code-bg:             oklch(0.16 0 0);
   --md-code-header:         oklch(0.18 0 0);
   --md-code-border:         oklch(0.24 0 0);
-  --md-code-lang:           oklch(0.52 0 0);
-  --md-code-copy:           oklch(0.5 0 0);
+  --md-code-lang:           oklch(0.66 0 0);
+  --md-code-copy:           oklch(0.66 0 0);
   --md-code-copy-hover:     oklch(0.9 0 0);
   --md-code-inline-bg:      oklch(0.2 0 0);
   --md-code-inline-text:    oklch(0.88 0 0);
