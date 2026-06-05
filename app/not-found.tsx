@@ -12,7 +12,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="mt-6 inline-flex items-center rounded-[var(--md-radius-sm)] bg-[var(--md-btn-bg)] px-4 py-2 text-sm font-medium text-[var(--md-btn-text)] transition-colors hover:bg-[var(--md-btn-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-link)]"
+          className="mt-6 inline-flex items-center rounded-[var(--md-radius-sm)] bg-[var(--md-btn-bg)] px-4 py-2 text-sm font-medium text-[var(--md-btn-text)] transition-colors hover:bg-[var(--md-btn-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--md-focus)]"
         >
           Return to editor
         </Link>
